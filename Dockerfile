@@ -1,6 +1,5 @@
 FROM node:10.1.0
 
-RUN mkdir -p /faredge/mqtt-random-data-publisher
 WORKDIR /faredge/mqtt-random-data-publisher
 
 COPY package.json /faredge/mqtt-random-data-publisher

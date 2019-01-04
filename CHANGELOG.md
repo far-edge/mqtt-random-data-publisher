@@ -7,4 +7,3 @@
 **ADDED**
 
 * Publish random values periodically to an MQTT topic.
-
