@@ -2,6 +2,13 @@
 
 **NOTE:** The project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+##### [Unleleased]
+
+**SECURITY**
+
+* Fix security vulnerabilities reported by GitHub.
+
+
 ##### [1.0.1] - 2019-06-26
 
 **SECURITY**
