@@ -40,14 +40,21 @@ const schema = Joi.object({
 }).unknown().required();
 const { error, value: _env } = Joi.validate(process.env, schema);
 if (error) {
-  logger.error(`The environment is invalid (cause: ${ error.details[0].message }).`);
-  process.exit(1);
+  logger.error(`The environment is invalid (cause: ${error.details[0].message}).`);
+  process.exit(23);
 }
 
 // Connect to the MQTT broker.
-const client = mqtt.connect(process.env.MQTT_BROKER_URL);
+logger.info(`System connects to the MQTT broker @ ${process.env.MQTT_BROKER_URL}.`);
+const client = mqtt.connect(process.env.MQTT_BROKER_URL, {
+  connectTimeout: 5
+});
+
+let connected = false;
 
 client.on('connect', () => {
+  logger.info(`System connected to the MQTT broker @ ${process.env.MQTT_BROKER_URL}.`);
+  connected = true;
   const topic = process.env.MQTT_TOPIC;
   const min = parseInt(process.env.MIN_VALUE);
   const max = parseInt(process.env.MAX_VALUE);
@@ -72,6 +79,16 @@ client.on('error', (error) => {
   logger.error('Something went wrong.', error);
 });
 
+// NOTE: No error event is sent when connection fails. The code below can be removed when
+// https://github.com/GladysAssistant/Gladys/issues/540 is fixed.
+setTimeout(() => {
+  if (connected) {
+    return;
+  }
+  logger.error(`System failed to connect to the MQTT broker @ ${process.env.MQTT_BROKER_URL}.`);
+  process.exit(42);
+}, 30 * 1000);
+
 if (!module.parent) {
-  logger.info(`Random value generator for topic ${process.env.MQTT_TOPIC} started.`);
+  logger.info(`Random value generator for topic ${ process.env.MQTT_TOPIC } started.`);
 }
